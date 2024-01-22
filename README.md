@@ -1,6 +1,14 @@
 # GhTrend
 
-<img src="./docs/GhTrend.gif" width="360" />
+<p align="center">
+<img src="https://github.com/cybershang/ghtrend/blob/a6460104b013274c96bd3f58de705ff2cb002bda/docs/media/GhTrend.gif" width="360"/>
+</p>
+
+<p align="center">
+<a href="https://pypi.org/project/ghtrend/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/ghtrend"></a>
+<a href="https://pypistats.org/packages/ghtrend"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dw/ghtrend"></a>
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+</p>
 
 
 Request and parse Github trending page.
