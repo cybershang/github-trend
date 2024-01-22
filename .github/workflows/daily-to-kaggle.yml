@@ -35,10 +35,11 @@ jobs:
         run: |
           kaggle datasets download ${{ vars.KAGGLE_USERNAME }}/${{vars.KAGGLE_REPO}} -p ./
           unzip ${{vars.KAGGLE_REPO}}.zip
+          mkdir -p ${{vars.KAGGLE_REPO}}/${DATE_RANGE}
 
       - name: 5. 🪄Generate daily CSV report
         run: |
-          ghtrend daily ${{ vars.KAGGLE_REPO }}/$DATE_RANGE/$(date '+%Y%m%d').csv
+          ghtrend daily ${{ vars.KAGGLE_REPO }}/${DATE_RANGE}/$(date '+%Y%m%d').csv
 
       - name: 5. ☁️Upload CSV to Kaggle
         run: kaggle datasets version -p ${{ vars.KAGGLE_REPO }} -m "$(date '+%Y%m%d') daily github trend uploaded."
