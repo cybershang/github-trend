@@ -45,4 +45,4 @@ jobs:
           ls -r
 
       - name: 6. ☁️Upload CSV to Kaggle
-        run: kaggle datasets version -p ${{ vars.KAGGLE_REPO }} -m "$(date '+%Y%m%d') daily github trend uploaded."
+        run: kaggle datasets version -p ${{ vars.KAGGLE_REPO }} -m "$(date '+%Y%m%d') daily github trend uploaded." --dir-mode zip
