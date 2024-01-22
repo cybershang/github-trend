@@ -1,6 +1,7 @@
 # GhTrend
 
-![GhTrend LOGO](./docs/GhTrend.gif)
+<img src="./docs/GhTrend.gif" width="360" />
+
 
 Request and parse Github trending page.
 
