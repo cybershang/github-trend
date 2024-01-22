@@ -3,7 +3,7 @@ name: Github Trend Daily
 on:
   schedule:
     # - cron: "0 0 * * *" # Run every day at midnight UTC
-    - cron: "0 15 * * *"
+    - cron: "50 23 * * *"
   workflow_dispatch: {}
 
 jobs:
