@@ -34,8 +34,9 @@ jobs:
       - name: 4. 📥Download dataset and uncompress it
         run: |
           kaggle datasets download ${{ vars.KAGGLE_USERNAME }}/${{vars.KAGGLE_REPO}} -p ./
-          unzip ${{vars.KAGGLE_REPO}}.zip
-          mkdir -p ${{vars.KAGGLE_REPO }}/${DATE_RANGE}
+          mkdir -p ${{ vars.KAGGLE_REPO }}
+          unzip ${{ vars.KAGGLE_REPO }}.zip -d ${{ vars.KAGGLE_REPO }}
+          mkdir -p ${{ vars.KAGGLE_REPO }}/${DATE_RANGE}
           kaggle datasets metadata -p ${{ vars.KAGGLE_REPO }}/ ${{ vars.KAGGLE_REPO }}
 
       - name: 5. 🪄Generate daily CSV report
