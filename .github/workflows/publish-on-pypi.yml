@@ -31,11 +31,10 @@ jobs:
         id: mint
         uses: tschm/token-mint-action@v1.0.2
 
-      - name: 4. 🔑Setting up PYPI API token
-        run: |
-          poetry config pypi-token.pypi ${{ steps.mint.outputs.api-token }}
-
-      - name: 5. 📦Build and 🪄Publish
+      - name: 4. 📦Build
         run: |
           poetry build
-          poetry publish
+
+      - name: 5. 🪄Publish
+        run: |
+          poetry publish -u __token__ -p '${{ steps.mint.outputs.api-token }}'
