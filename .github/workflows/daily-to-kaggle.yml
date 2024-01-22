@@ -1,0 +1,29 @@
+name: Github Trend Daily
+
+on:
+  schedule:
+    # - cron: "0 0 * * *" # Run every day at midnight UTC
+    - cron: '45 9 * * *' 
+
+jobs:
+  generate-and-upload:
+    name: Generate and upload trend data to kaggle
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. 📍Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.x"
+
+      - name: 2. 📦Install ghtrend package and Kaggle cli
+        run: pip install ghtrend kaggle
+
+      - name: 3. 🪄Generate daily CSV report
+        run: ghtrend daily $(date '+%Y%m%d').csv
+
+      - name: 4. 🔑Authenticate with Kaggle API
+        run: echo '{"username":"${{ secrets.KAGGLE_USERNAME }}","key":"${{ secrets.KAGGLE_API_TOKEN }}"}' > ~/.kaggle/kaggle.json
+
+      - name: 5. ☁️Upload CSV to Kaggle
+        run: kaggle datasets version -p $(date '+%Y%m%d').csv -m "$(date '+%Y%m%d') daily github trend uploaded."
