@@ -3,13 +3,15 @@ name: Github Trend Daily
 on:
   schedule:
     # - cron: "0 0 * * *" # Run every day at midnight UTC
-    - cron: '0 15 * * *' 
+    - cron: "0 15 * * *"
   workflow_dispatch: {}
 
 jobs:
   generate-and-upload:
     name: Generate and upload trend data to kaggle
     runs-on: ubuntu-latest
+    env:
+      DATE_RANGE: daily
 
     steps:
       - name: 0. Print current date and time
@@ -23,16 +25,20 @@ jobs:
       - name: 2. 📦Install ghtrend package and Kaggle cli
         run: pip install ghtrend kaggle
 
-      - name: 3. 🪄Generate daily CSV report
-        run: |
-          mkdir $(date '+%Y%m%d')
-          ghtrend daily $(date '+%Y%m%d')/$(date '+%Y%m%d').csv
-        
-      - name: 4. 🔑Authenticate with Kaggle API
+      - name: 3. 🔑Authenticate with Kaggle API
         run: |
           mkdir -p ~/.kaggle
-          echo '{"username":"${{ secrets.KAGGLE_USERNAME }}","key":"${{ secrets.KAGGLE_API_TOKEN }}"}' > ~/.kaggle/kaggle.json
+          echo '{"username":"${{ vars.KAGGLE_USERNAME }}","key":"${{ secrets.KAGGLE_API_TOKEN }}"}' > ~/.kaggle/kaggle.json
           chmod 600 ~/.kaggle/kaggle.json
 
+      - name: 4. 📥Download dataset and uncompress it
+        run: |
+          kaggle datasets download ${{ vars.KAGGLE_USERNAME }}/${{vars.KAGGLE_REPO}} -p ./
+          unzip ${{vars.KAGGLE_REPO}}.zip
+
+      - name: 5. 🪄Generate daily CSV report
+        run: |
+          ghtrend daily ${{ vars.KAGGLE_REPO }}/$DATE_RANGE/$(date '+%Y%m%d').csv
+
       - name: 5. ☁️Upload CSV to Kaggle
-        run: kaggle datasets version -p $(date '+%Y%m%d') -m "$(date '+%Y%m%d') daily github trend uploaded."
+        run: kaggle datasets version -p ${{ vars.KAGGLE_REPO }} -m "$(date '+%Y%m%d') daily github trend uploaded."
