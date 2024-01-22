@@ -27,7 +27,9 @@ jobs:
         run: ghtrend daily $(date '+%Y%m%d').csv
 
       - name: 4. 🔑Authenticate with Kaggle API
-        run: echo '{"username":"${{ secrets.KAGGLE_USERNAME }}","key":"${{ secrets.KAGGLE_API_TOKEN }}"}' > ~/.kaggle/kaggle.json
+        run: |
+          mkdir -p ~/.kaggle
+          echo '{"username":"${{ secrets.KAGGLE_USERNAME }}","key":"${{ secrets.KAGGLE_API_TOKEN }}"}' > ~/.kaggle/kaggle.json
 
       - name: 5. ☁️Upload CSV to Kaggle
         run: kaggle datasets version -p $(date '+%Y%m%d').csv -m "$(date '+%Y%m%d') daily github trend uploaded."
