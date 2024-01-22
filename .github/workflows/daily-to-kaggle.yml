@@ -40,7 +40,8 @@ jobs:
 
       - name: 5. 🪄Generate daily CSV report
         run: |
-          ghtrend daily ${{ vars.KAGGLE_REPO }}/${DATE_RANGE}/$(date '+%Y%m%d').csv
+          ghtrend daily ${{ vars.KAGGLE_REPO }}/${DATE_RANGE}/$(date '+%Y%m%d').csv --quiet
+          ls -r
 
       - name: 6. ☁️Upload CSV to Kaggle
         run: kaggle datasets version -p ${{ vars.KAGGLE_REPO }} -m "$(date '+%Y%m%d') daily github trend uploaded."
