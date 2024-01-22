@@ -4,30 +4,36 @@ on:
   release:
     types: [published]
 
-permissions:
-  contents: read
-
 jobs:
-  deploy:
+  build-and-publish:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      # This permission is required for trusted publishing.
+      id-token: write
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: 1. 📍Set up Python
         uses: actions/setup-python@v3
         with:
           python-version: "3.x"
 
-      - name: Install Poetry
+      - name: 2. ✒️Install Poetry
         run: |
           curl -sSL https://install.python-poetry.org | python -
 
-      - name: Configure Poetry
-        run: |
-          poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
+      - name: 3. ✉️Retrieve PYPI API token through OIDC
+        id: mint
+        uses: tschm/token-mint-action@v1.0.2
 
-      - name: Build and Publish
+      - name: 4. 🔑Setting up PYPI API token
+        run: |
+          poetry config pypi-token.pypi ${{ steps.mint.outputs.api-token }}
+
+      - name: 5. 📦Build and 🪄Publish
         run: |
           poetry build
           poetry publish
