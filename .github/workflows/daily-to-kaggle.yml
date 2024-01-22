@@ -4,6 +4,7 @@ on:
   schedule:
     # - cron: "0 0 * * *" # Run every day at midnight UTC
     - cron: '0 15 * * *' 
+  workflow_dispatch: {}
 
 jobs:
   generate-and-upload:
@@ -11,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: 0. Print current date and time
+        run: echo "The current date and time is $(date)"
+
       - name: 1. 📍Set up Python
         uses: actions/setup-python@v3
         with:
