@@ -3,7 +3,7 @@ name: Github Trend Daily
 on:
   schedule:
     # - cron: "0 0 * * *" # Run every day at midnight UTC
-    - cron: "50 23 * * *"
+    - cron: "19 0 * * *"
   workflow_dispatch: {}
 
 jobs:
@@ -14,7 +14,7 @@ jobs:
       DATE_RANGE: daily
 
     steps:
-      - name: 0. Print current date and time
+      - name: 0. ⏰Print current date and time
         run: echo "The current date and time is $(date)"
 
       - name: 1. 📍Set up Python
