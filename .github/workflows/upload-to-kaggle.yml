@@ -1,0 +1,57 @@
+name: Github Trend Daily/Weely/Monthly
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  generate-and-upload:
+    name: Generate and upload trend data to kaggle
+    runs-on: ubuntu-latest
+    env:
+      DATA_RANGE: $([[ $(date +%u) == 0 ]] && echo "weekly" || [[ $(date +%d) == $(date -d "$(date +%Y-%m-01) + 1 month - 1 day" +%d) ]] && echo "monthly" || echo "other")
+
+    steps:
+      - name: 0. ⏰Print current date and time
+        run: echo "The current date and time is $(date)"
+
+      - name: 1. 📍Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.x"
+
+      - name: 2. 📦Install ghtrend package and Kaggle cli
+        run: pip install ghtrend kaggle
+
+      - name: 3. 🔑Authenticate with Kaggle API
+        run: |
+          mkdir -p ~/.kaggle
+          echo '{"username":"${{ vars.KAGGLE_USERNAME }}","key":"${{ secrets.KAGGLE_API_TOKEN }}"}' > ~/.kaggle/kaggle.json
+          chmod 600 ~/.kaggle/kaggle.json
+
+      - name: 4. 📥Download dataset and uncompress it
+        run: |
+          kaggle datasets download ${{ vars.KAGGLE_USERNAME }}/${{vars.KAGGLE_REPO}} -p ./
+          mkdir -p ${{ vars.KAGGLE_REPO }}
+          unzip ${{ vars.KAGGLE_REPO }}.zip -d ${{ vars.KAGGLE_REPO }}
+          mkdir -p ${{ vars.KAGGLE_REPO }}/daily
+          if [[ ${{ env.DATA_RANGE }} != "other" ]]; then
+            mkdir -p ${{ vars.KAGGLE_REPO }}/${{ env.DATA_RANGE }}
+          fi
+          kaggle datasets metadata -p ${{ vars.KAGGLE_REPO }}/ ${{ vars.KAGGLE_REPO }}
+
+      - name: 5. 🪄Generate daily CSV report
+        run: |
+          ghtrend daily ${{ vars.KAGGLE_REPO }}/daily/$(date '+%Y%m%d').csv --quiet
+          if [[ ${{ env.DATA_RANGE }} != "other" ]]; then
+            ghtrend ${{ env.DATA_RANGE }} ${{ vars.KAGGLE_REPO }}/${{ env.DATA_RANGE }}/$(date '+%Y%m%d').csv --quiet
+          fi
+          ls -r
+
+      - name: 6. ☁️Upload CSV to Kaggle
+        run: |
+          if [[ ${{ env.DATA_RANGE }} != "other" ]]; then
+            range_message=" and ${{ env.DATA_RANGE }} "
+          else
+            range_message=""
+          fi
+          kaggle datasets version -p ${{ vars.KAGGLE_REPO }} -m "$(date '+%Y%m%d') daily${range_message} github trend uploaded." --dir-mode zip
